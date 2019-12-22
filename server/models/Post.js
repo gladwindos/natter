@@ -8,7 +8,8 @@ const PostSchema = new mongoose.Schema(
         },
         community: {
             type: mongoose.Schema.Types.ObjectId,
-            ref: 'community'
+            ref: 'community',
+            required: true
         },
         title: {
             type: String,
@@ -24,7 +25,7 @@ const PostSchema = new mongoose.Schema(
         comments: [
             {
                 user: {
-                    type: Schema.Types.ObjectId,
+                    type: mongoose.Schema.Types.ObjectId,
                     ref: 'user'
                 },
                 text: {

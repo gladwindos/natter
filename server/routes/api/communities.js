@@ -63,7 +63,7 @@ router.get('/:id', async (req, res) => {
     try {
         const community = await Community.findById(req.params.id);
 
-        if (!req.params.id.match(/^[0-9a-fA-F]{24}$/) || !community) {
+        if (!community) {
             return res.status(404).json({ msg: 'Community not found' });
         }
 
