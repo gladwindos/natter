@@ -18,10 +18,19 @@ const PostSchema = new mongoose.Schema(
         details: {
             type: String
         },
-        votes: {
-            type: Number,
-            default: 0
-        },
+        votes: [
+            {
+                user: {
+                    type: mongoose.Schema.Types.ObjectId,
+                    ref: 'users'
+                },
+                value: {
+                    type: Number,
+                    min: -1,
+                    max: 1
+                }
+            }
+        ],
         comments: [
             {
                 user: {

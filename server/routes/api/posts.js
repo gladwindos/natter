@@ -63,7 +63,7 @@ router.post(
         } catch (error) {
             console.error(error.message);
             if (error.kind == 'ObjectId') {
-                return res.status(400).json({ msg: 'Community not found' });
+                return res.status(400).json({ msg: 'Id not valid' });
             }
             res.status(500).send('Server Error');
         }
@@ -99,6 +99,9 @@ router.get('/user/:id', async (req, res) => {
         res.json(posts);
     } catch (error) {
         console.error(error.message);
+        if (error.kind == 'ObjectId') {
+            return res.status(400).json({ msg: 'Id not valid' });
+        }
         res.status(500).send('Server Error');
     }
 });
@@ -118,6 +121,9 @@ router.get('/community/:id', async (req, res) => {
         res.json(posts);
     } catch (error) {
         console.error(error.message);
+        if (error.kind == 'ObjectId') {
+            return res.status(400).json({ msg: 'Id not valid' });
+        }
         res.status(500).send('Server Error');
     }
 });
@@ -150,7 +156,6 @@ router.get('/feed', auth, async (req, res) => {
 router.get('/:id', async (req, res) => {
     try {
         const post = await Post.findById(req.params.id);
-
         if (!post) {
             return res.status(404).json({ msg: 'Post not found' });
         }
@@ -159,7 +164,7 @@ router.get('/:id', async (req, res) => {
     } catch (error) {
         console.error(error.message);
         if (error.kind == 'ObjectId') {
-            return res.status(400).json({ msg: 'Post not found' });
+            return res.status(400).json({ msg: 'Id not valid' });
         }
         res.status(500).send('Server Error');
     }
@@ -168,21 +173,215 @@ router.get('/:id', async (req, res) => {
 // @route DELETE api/posts/:id
 // @desc Delete a post
 // @access Private
+router.delete('/:id', auth, async (req, res) => {
+    try {
+        const post = await Post.findById(req.params.id);
+
+        if (!post) {
+            return res.status(404).json({ msg: 'Post not found' });
+        }
+
+        // Check user
+        if (post.user.toString() !== req.user.id) {
+            return res.status(401).json({ msg: 'User not authorized' });
+        }
+
+        await post.remove();
+
+        res.json({ msg: 'Post removed' });
+    } catch (error) {
+        console.error(error.message);
+        if (error.kind == 'ObjectId') {
+            return res.status(400).json({ msg: 'Id not valid' });
+        }
+        res.status(500).send('Server Error');
+    }
+});
 
 // @route    PUT api/posts/:id/upvote
 // @desc     Upvote a post
 // @access   Private
+router.put('/:id/upvote', auth, async (req, res) => {
+    try {
+        const post = await Post.findById(req.params.id);
+        if (!post) {
+            return res.status(404).json({ msg: 'Post not found' });
+        }
+
+        if (
+            post.votes.filter(vote => vote.user.toString() === req.user.id)
+                .length > 0
+        ) {
+            const userVote = post.votes.filter(
+                vote => vote.user.toString() === req.user.id
+            )[0];
+
+            switch (userVote.value) {
+                case 1:
+                    return res
+                        .status(400)
+                        .json({ msg: 'Post has already been upvoted' });
+                    break;
+                case 0:
+                    userVote.value = 1;
+                    break;
+                case -1:
+                    userVote.value = 0;
+                    break;
+                default:
+                    return res.status(400).json({
+                        msg: 'Something went wrong, nothing has been updated.'
+                    });
+            }
+        } else {
+            post.votes.unshift({ user: req.user.id, value: 1 });
+        }
+
+        await post.save();
+
+        res.json(post.votes);
+    } catch (error) {
+        console.error(error.message);
+        if (error.kind == 'ObjectId') {
+            return res.status(400).json({ msg: 'Id not valid' });
+        }
+        res.status(500).send('Server Error');
+    }
+});
 
 // @route    PUT api/posts/:id/downvote
 // @desc     Downvote a post
 // @access   Private
+router.put('/:id/downvote', auth, async (req, res) => {
+    try {
+        const post = await Post.findById(req.params.id);
+        if (!post) {
+            return res.status(404).json({ msg: 'Post not found' });
+        }
+
+        if (
+            post.votes.filter(vote => vote.user.toString() === req.user.id)
+                .length > 0
+        ) {
+            const userVote = post.votes.filter(
+                vote => vote.user.toString() === req.user.id
+            )[0];
+
+            switch (userVote.value) {
+                case -1:
+                    return res
+                        .status(400)
+                        .json({ msg: 'Post has already been downvoted' });
+                    break;
+                case 0:
+                    userVote.value = -1;
+                    break;
+                case 1:
+                    userVote.value = 0;
+                    break;
+                default:
+                    return res.status(400).json({
+                        msg: 'Something went wrong, nothing has been updated.'
+                    });
+            }
+        } else {
+            post.votes.unshift({ user: req.user.id, value: -1 });
+        }
+
+        await post.save();
+
+        res.json(post.votes);
+    } catch (error) {
+        console.error(error.message);
+        if (error.kind == 'ObjectId') {
+            return res.status(400).json({ msg: 'Id not valid' });
+        }
+        res.status(500).send('Server Error');
+    }
+});
 
 // @route    POST api/posts/:id/comment
 // @desc     Comment on a post
 // @access   Private
+router.post(
+    '/:id/comment',
+    [
+        auth,
+        [
+            check('text', 'Text is required')
+                .not()
+                .isEmpty()
+        ]
+    ],
+    async (req, res) => {
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            return res.status(400).json({ errors: errors.array() });
+        }
+
+        try {
+            const post = await Post.findById(req.params.id);
+            if (!post) {
+                return res.status(404).json({ msg: 'Post not found' });
+            }
+
+            const newComment = {
+                user: req.user.id,
+                text: req.body.text
+            };
+
+            post.comments.unshift(newComment);
+
+            await post.save();
+
+            res.json(post.comments);
+        } catch (error) {
+            console.error(error.message);
+            if (error.kind == 'ObjectId') {
+                return res.status(400).json({ msg: 'Id not valid' });
+            }
+            res.status(500).send('Server Error');
+        }
+    }
+);
 
 // @route    DELETE api/posts/:id/comment/:comment_id
 // @desc     Delete comment
 // @access   Private
+router.delete('/:id/comment/:comment_id', auth, async (req, res) => {
+    try {
+        const post = await Post.findById(req.params.id);
+        if (!post) {
+            return res.status(404).json({ msg: 'Post not found' });
+        }
+
+        const comment = post.comments.find(
+            comment => comment.id === req.params.comment_id
+        );
+        if (!comment) {
+            return res.status(404).json({ msg: 'Comment does not exist' });
+        }
+
+        if (comment.user.toString() !== req.user.id) {
+            return res.status(401).json({ msg: 'User not authorized' });
+        }
+
+        const removeIndex = post.comments
+            .map(comment => comment.id)
+            .indexOf(req.params.comment_id);
+
+        post.comments.splice(removeIndex, 1);
+
+        await post.save();
+
+        res.json(post.comments);
+    } catch (error) {
+        console.error(error.message);
+        if (error.kind == 'ObjectId') {
+            return res.status(400).json({ msg: 'Id not valid' });
+        }
+        res.status(500).send('Server Error');
+    }
+});
 
 module.exports = router;
