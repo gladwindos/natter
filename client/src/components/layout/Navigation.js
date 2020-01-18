@@ -36,7 +36,7 @@ const Navigation = ({ auth: { isAuthenticated, loading }, logout }) => {
             <Navbar.Toggle aria-controls='navbar-nav' />
             <Navbar.Collapse id='navbar-nav'>
                 <Nav className='mr-auto'>
-                    <Nav.Link href='/'>Home</Nav.Link>
+                    <Nav.Link href='/'>Feed</Nav.Link>
                     <Nav.Link href='/explore'>Explore</Nav.Link>
                     {!loading && (
                         <Fragment>
@@ -57,7 +57,7 @@ const Navigation = ({ auth: { isAuthenticated, loading }, logout }) => {
     );
 };
 
-Navbar.propTypes = {
+Navigation.propTypes = {
     logout: PropTypes.func.isRequired,
     auth: PropTypes.object.isRequired
 };

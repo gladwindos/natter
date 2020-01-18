@@ -2,7 +2,7 @@ import React from 'react';
 import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
 
-export const Explore = () => {
+const Explore = () => {
     return (
         <section className='section-explore'>
             <Container>

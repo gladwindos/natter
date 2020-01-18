@@ -1,0 +1,61 @@
+.section-feed {
+    margin-top: 50px;
+}
+
+.post-list {
+    max-width: 720px;
+    margin: auto;
+}
+
+.post-item {
+    margin-bottom: 60px;
+}
+
+.post-item .card-header {
+    display: flex;
+    justify-content: space-between;
+}
+
+.post-user,
+.post-community {
+    display: flex;
+    align-items: center;
+}
+
+.post-item .post-profile-img {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    margin-right: 10px;
+}
+
+.post-item .card-body {
+    display: flex;
+    flex-direction: row;
+}
+
+.post-item .post-title {
+    margin-left: 0.75em;
+}
+
+.post-item .post-img {
+    width: 25%;
+    height: 25%;
+}
+
+.post-item .card-footer {
+    display: flex;
+    justify-content: space-between;
+}
+
+.post-item .post-votes span {
+    padding: 0 10px;
+}
+
+.post-item .post-comments > a > span {
+    padding-left: 10px;
+}
+
+.post-item .card-footer .card-link {
+    color: inherit;
+}
