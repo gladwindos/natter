@@ -13,6 +13,7 @@ import './App.css';
 import setAuthToken from './utils/setAuthToken';
 import { loadUser } from './actions/auth';
 import { library } from '@fortawesome/fontawesome-svg-core';
+import { fab } from '@fortawesome/free-brands-svg-icons';
 import {
     faArrowUp,
     faArrowDown,
@@ -20,7 +21,7 @@ import {
     faEllipsisH
 } from '@fortawesome/free-solid-svg-icons';
 
-library.add(faArrowUp, faArrowDown, faComments, faEllipsisH);
+library.add(fab, faArrowUp, faArrowDown, faComments, faEllipsisH);
 
 if (localStorage.token) {
     setAuthToken(localStorage.token);

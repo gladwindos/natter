@@ -75,7 +75,11 @@ router.post(
 // @access Public
 router.get('/', async (req, res) => {
     try {
-        const posts = await Post.find().sort({ createdAt: -1 });
+        const posts = await Post.find()
+            .sort({ createdAt: -1 })
+            .populate({ path: 'user', select: 'username avatar' })
+            .populate({ path: 'community', select: 'name' });
+
         res.json(posts);
     } catch (error) {
         console.error(error.message);

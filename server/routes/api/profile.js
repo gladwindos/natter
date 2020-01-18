@@ -15,8 +15,6 @@ router.post('/', auth, async (req, res) => {
     const profileFields = {};
     profileFields.user = req.user.id;
 
-    if (req.body.avatar) profileFields.avatar = req.body.avatar;
-
     try {
         let profile = await Profile.findOneAndUpdate(
             { user: req.user.id },

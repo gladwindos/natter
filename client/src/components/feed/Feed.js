@@ -10,15 +10,31 @@ const Feed = ({ getPosts, post: { posts, loading } }) => {
     useEffect(() => {
         getPosts();
     }, [getPosts]);
-    return loading ? (
-        <Spinner animation='border' />
-    ) : (
+    // return loading ? (
+    //     <Spinner animation='border' />
+    // ) : (
+    //     <section className='section-feed'>
+    //         <Container>
+    //             <div className='post-list'>
+    //                 {posts.map(post => (
+    //                     <PostItem key={post._id} post={post} />
+    //                 ))}
+    //             </div>
+    //         </Container>
+    //     </section>
+    // );
+
+    return (
         <section className='section-feed'>
             <Container>
                 <div className='post-list'>
-                    {posts.map(post => (
-                        <PostItem key={post._id} post={post} />
-                    ))}
+                    {loading ? (
+                        <Spinner animation='border' />
+                    ) : (
+                        posts.map(post => (
+                            <PostItem key={post._id} post={post} />
+                        ))
+                    )}
                 </div>
             </Container>
         </section>

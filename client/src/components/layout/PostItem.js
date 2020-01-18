@@ -1,22 +1,37 @@
 import React from 'react';
-import Container from 'react-bootstrap/Container';
+import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
+import Moment from 'react-moment';
 import Card from 'react-bootstrap/Card';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
-const PostItem = () => {
+const totalVotes = votes => {
+    return votes.length > 0
+        ? votes.map(vote => vote.value).reduce((total, val) => total + val)
+        : 0;
+};
+
+const PostItem = ({
+    auth,
+    post: { _id, title, user, community, votes, comments, createdAt }
+}) => {
     return (
         <Card className='post-item'>
             <Card.Header>
                 <div className='post-user'>
                     <img
                         className='post-profile-img'
-                        src='https://scontent-lht6-1.cdninstagram.com/v/t51.2885-19/s150x150/15338384_1205686669466695_5003911288120672256_a.jpg?_nc_ht=scontent-lht6-1.cdninstagram.com&_nc_ohc=vgk8E9AL7xYAX9rMAzp&oh=d0fadb982e7629c3a30445a161cc9ec6&oe=5EA1C7A5'
+                        src={
+                            user.avatar
+                                ? user.avatar
+                                : 'https://pixabay.com/get/5fe7d6474c52b10ff3d89938b977692b083edbe25a52764b752c79/blank-profile-picture-973460_640.png'
+                        }
                         alt='profile image'
                     />
-                    <Card.Link href='#'>gladwindos</Card.Link>
+                    <Card.Link href='#'>{user.username}</Card.Link>
                 </div>
                 <div className='post-community'>
-                    <Card.Link href='#'>Rap/Hip-Hop</Card.Link>
+                    <Card.Link href='#'>{community.name}</Card.Link>
                 </div>
             </Card.Header>
             <Card.Body>
@@ -25,13 +40,14 @@ const PostItem = () => {
                     src='https://sslf.ulximg.com/image/750x750/cover/1578635838_9332fe6843bf38e5169c2e860ee427fc.jpg/da4340c0bc9f3d4eed33e53af916ee76/1578635838_0b73c1dd62df5c4768fbef30965ed99a.jpg'
                 />
                 <div className='post-details'>
-                    <Card.Title className='post-title'>
-                        This new Drake and Future tune is sick! What you lot
-                        think?
-                    </Card.Title>
+                    <Card.Title className='post-title'>{title}</Card.Title>
                     <div className='post-details-footer'>
-                        {/* Gonna have apple music, spotify, youtube links/icons here */}
-                        <span>2 days ago</span>
+                        <div className='post-icons'>
+                            <FontAwesomeIcon icon={['fab', 'spotify']} />
+                        </div>
+                        <span className='post-date'>
+                            Posted <Moment fromNow>{createdAt}</Moment>
+                        </span>
                     </div>
                 </div>
             </Card.Body>
@@ -40,7 +56,7 @@ const PostItem = () => {
                     <Card.Link href='#'>
                         <FontAwesomeIcon icon='arrow-up' />
                     </Card.Link>
-                    <span>900k</span>
+                    <span>{totalVotes(votes)}</span>
                     <Card.Link href='#'>
                         <FontAwesomeIcon icon='arrow-down' />
                     </Card.Link>
@@ -49,8 +65,11 @@ const PostItem = () => {
                     <Card.Link href='#'>
                         <FontAwesomeIcon icon='comments' />
                         <span>
-                            80k{' '}
-                            <span className='d-none d-sm-inline'>Comments</span>
+                            {comments.length}
+                            <span className='d-none d-sm-inline'>
+                                {' '}
+                                Comments
+                            </span>
                         </span>
                     </Card.Link>
                 </div>
@@ -64,4 +83,13 @@ const PostItem = () => {
     );
 };
 
-export default PostItem;
+PostItem.propTypes = {
+    post: PropTypes.object.isRequired,
+    auth: PropTypes.object.isRequired
+};
+
+const mapStateToProps = state => ({
+    auth: state.auth
+});
+
+export default connect(mapStateToProps, {})(PostItem);
