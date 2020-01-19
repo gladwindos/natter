@@ -76,3 +76,12 @@
 .post-item .card-footer .card-link {
     color: inherit;
 }
+
+.post-item .post-options button,
+.post-item .post-options button:active {
+    /* color: inherit; */
+}
+
+.post-item .post-options button::after {
+    content: none;
+}

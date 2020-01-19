@@ -6,6 +6,7 @@ import Navigation from './components/layout/Navigation';
 import Feed from './components/feed/Feed';
 import Explore from './components/explore/Explore';
 import Profile from './components/profile/Profile';
+import NewPost from './components/posts/NewPost';
 import Register from './components/auth/Register';
 import Login from './components/auth/Login';
 import AlertCustom from './components/layout/AlertCustom';
@@ -42,6 +43,7 @@ const App = () => {
                         <Route exact path='/' component={Feed} />
                         <Route exact path='/explore' component={Explore} />
                         <Route exact path='/profile' component={Profile} />
+                        <Route exact path='/new-post' component={NewPost} />
                         <Route exact path='/register' component={Register} />
                         <Route exact path='/login' component={Login} />
                     </Switch>

@@ -18,6 +18,7 @@ const Navigation = ({ auth: { isAuthenticated, loading }, logout }) => {
     const authLinks = (
         <Fragment>
             <Nav.Link href='/profile'>Profile</Nav.Link>
+            <Nav.Link href='/new-post'>New Post</Nav.Link>
             <Nav.Link href='/#!' onClick={handleLogout}>
                 Logout
             </Nav.Link>

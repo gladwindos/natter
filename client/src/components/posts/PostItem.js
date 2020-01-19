@@ -3,7 +3,9 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import Moment from 'react-moment';
 import Card from 'react-bootstrap/Card';
+import Dropdown from 'react-bootstrap/Dropdown';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { upvotePost, downvotePost, deletePost } from '../../actions/post';
 
 const totalVotes = votes => {
     return votes.length > 0
@@ -13,7 +15,10 @@ const totalVotes = votes => {
 
 const PostItem = ({
     auth,
-    post: { _id, title, user, community, votes, comments, createdAt }
+    post: { _id, title, user, community, votes, comments, createdAt },
+    upvotePost,
+    downvotePost,
+    deletePost
 }) => {
     return (
         <Card className='post-item'>
@@ -24,9 +29,9 @@ const PostItem = ({
                         src={
                             user.avatar
                                 ? user.avatar
-                                : 'https://pixabay.com/get/5fe7d6474c52b10ff3d89938b977692b083edbe25a52764b752c79/blank-profile-picture-973460_640.png'
+                                : 'https://www.gravatar.com/avatar/00000000000000000000000000000000?d=mp&f=y'
                         }
-                        alt='profile image'
+                        alt='profile'
                     />
                     <Card.Link href='#'>{user.username}</Card.Link>
                 </div>
@@ -53,11 +58,11 @@ const PostItem = ({
             </Card.Body>
             <Card.Footer>
                 <div className='post-votes'>
-                    <Card.Link href='#'>
+                    <Card.Link href='#!' onClick={e => upvotePost(_id)}>
                         <FontAwesomeIcon icon='arrow-up' />
                     </Card.Link>
                     <span>{totalVotes(votes)}</span>
-                    <Card.Link href='#'>
+                    <Card.Link href='#!' onClick={e => downvotePost(_id)}>
                         <FontAwesomeIcon icon='arrow-down' />
                     </Card.Link>
                 </div>
@@ -74,9 +79,25 @@ const PostItem = ({
                     </Card.Link>
                 </div>
                 <div className='post-options'>
-                    <Card.Link href='#'>
-                        <FontAwesomeIcon icon='ellipsis-h' />
-                    </Card.Link>
+                    <Dropdown className='post-options' drop='up' alignRight>
+                        <Dropdown.Toggle className='bg-transparent border-0 text-body'>
+                            <FontAwesomeIcon icon='ellipsis-h' />
+                        </Dropdown.Toggle>
+
+                        <Dropdown.Menu>
+                            <Dropdown.Item href='#!'>Share</Dropdown.Item>
+                            <Dropdown.Item href='#!'>Bookmark</Dropdown.Item>
+                            {!auth.loading && user._id === auth.user._id && (
+                                <Dropdown.Item
+                                    className='bg-danger text-white'
+                                    href='#!'
+                                    onClick={e => deletePost(_id)}
+                                >
+                                    Delete
+                                </Dropdown.Item>
+                            )}
+                        </Dropdown.Menu>
+                    </Dropdown>
                 </div>
             </Card.Footer>
         </Card>
@@ -85,11 +106,18 @@ const PostItem = ({
 
 PostItem.propTypes = {
     post: PropTypes.object.isRequired,
-    auth: PropTypes.object.isRequired
+    auth: PropTypes.object.isRequired,
+    upvotePost: PropTypes.func.isRequired,
+    downvotePost: PropTypes.func.isRequired,
+    deletePost: PropTypes.func.isRequired
 };
 
 const mapStateToProps = state => ({
     auth: state.auth
 });
 
-export default connect(mapStateToProps, {})(PostItem);
+export default connect(mapStateToProps, {
+    upvotePost,
+    downvotePost,
+    deletePost
+})(PostItem);
