@@ -22,10 +22,11 @@ const NewPost = ({
 
     const [formData, setFormData] = useState({
         title: '',
-        details: ''
+        details: '',
+        community: ''
     });
 
-    const { title, details } = formData;
+    const { title, details, community } = formData;
 
     const onChange = e => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -33,6 +34,14 @@ const NewPost = ({
 
     const onSubmit = async e => {
         e.preventDefault();
+
+        addPost({ title, details, community });
+
+        setFormData({
+            title: '',
+            details: '',
+            community: ''
+        });
     };
 
     return (
@@ -46,8 +55,14 @@ const NewPost = ({
                         ) : (
                             <Form onSubmit={e => onSubmit(e)}>
                                 <Form.Group controlId='postCommunity'>
-                                    <Form.Control as='select'>
-                                        <option value='' selected disabled>
+                                    <Form.Control
+                                        as='select'
+                                        required
+                                        defaultValue=''
+                                        name='community'
+                                        onChange={e => onChange(e)}
+                                    >
+                                        <option value='' disabled>
                                             Select Community
                                         </option>
                                         {profile.communities.map(community => (
