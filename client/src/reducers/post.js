@@ -1,5 +1,6 @@
 import {
-    GET_POST,
+    GET_All_POSTS,
+    GET_USER_FEED,
     UPDATE_VOTES,
     DELETE_POST,
     ADD_POST,
@@ -17,7 +18,8 @@ export default function(state = initialState, action) {
     const { type, payload } = action;
 
     switch (type) {
-        case GET_POST:
+        case GET_All_POSTS:
+        case GET_USER_FEED:
             return {
                 ...state,
                 posts: payload,

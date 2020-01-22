@@ -17,6 +17,7 @@ const Navigation = ({ auth: { isAuthenticated, loading }, logout }) => {
 
     const authLinks = (
         <Fragment>
+            <Nav.Link href='/feed'>Feed</Nav.Link>
             <Nav.Link href='/profile'>Profile</Nav.Link>
             <Nav.Link href='/new-post'>New Post</Nav.Link>
             <Nav.Link href='/#!' onClick={handleLogout}>
@@ -37,8 +38,7 @@ const Navigation = ({ auth: { isAuthenticated, loading }, logout }) => {
             <Navbar.Toggle aria-controls='navbar-nav' />
             <Navbar.Collapse id='navbar-nav'>
                 <Nav className='mr-auto'>
-                    <Nav.Link href='/'>Feed</Nav.Link>
-                    <Nav.Link href='/explore'>Explore</Nav.Link>
+                    <Nav.Link href='/'>Explore</Nav.Link>
                     {!loading && (
                         <Fragment>
                             {isAuthenticated ? authLinks : guestLinks}

@@ -52,6 +52,7 @@ router.post(
             }
             const newPost = new Post({
                 user: req.user.id,
+                profile: profile.id,
                 community: req.body.community,
                 title: req.body.title,
                 details: req.body.details
@@ -77,8 +78,9 @@ router.get('/', async (req, res) => {
     try {
         const posts = await Post.find()
             .sort({ createdAt: -1 })
-            .populate({ path: 'user', select: 'username avatar' })
-            .populate({ path: 'community', select: 'name' });
+            .populate({ path: 'user', select: 'username' })
+            .populate({ path: 'community', select: 'name' })
+            .populate({ path: 'profile', select: 'avatar' });
 
         res.json(posts);
     } catch (error) {
@@ -88,7 +90,7 @@ router.get('/', async (req, res) => {
 });
 
 // @route GET api/posts/user/:id
-// @desc Get all posts for user
+// @desc Get all posts a user has created
 // @access Public
 router.get('/user/:id', async (req, res) => {
     try {
@@ -109,6 +111,7 @@ router.get('/user/:id', async (req, res) => {
         res.status(500).send('Server Error');
     }
 });
+
 // @route GET api/posts/community/:id
 // @desc Get all posts for community
 // @access Private
@@ -145,7 +148,10 @@ router.get('/feed', auth, async (req, res) => {
         const posts = await Post.find()
             .where('community')
             .in(profileCommunities)
-            .sort({ createdAt: -1 });
+            .sort({ createdAt: -1 })
+            .populate({ path: 'user', select: 'username avatar' })
+            .populate({ path: 'community', select: 'name' })
+            .populate({ path: 'profile', select: 'avatar' });
 
         res.json(posts);
     } catch (error) {

@@ -10,6 +10,7 @@ import NewPost from './components/posts/NewPost';
 import Register from './components/auth/Register';
 import Login from './components/auth/Login';
 import AlertCustom from './components/layout/AlertCustom';
+import PrivateRoute from './components/routing/PrivateRoute';
 import './App.css';
 import setAuthToken from './utils/setAuthToken';
 import { loadUser } from './actions/auth';
@@ -40,10 +41,14 @@ const App = () => {
                     <Navigation />
                     <AlertCustom />
                     <Switch>
-                        <Route exact path='/' component={Feed} />
-                        <Route exact path='/explore' component={Explore} />
+                        <Route exact path='/' component={Explore} />
+                        <PrivateRoute exact path='/feed' component={Feed} />
                         <Route exact path='/profile' component={Profile} />
-                        <Route exact path='/new-post' component={NewPost} />
+                        <PrivateRoute
+                            exact
+                            path='/new-post'
+                            component={NewPost}
+                        />
                         <Route exact path='/register' component={Register} />
                         <Route exact path='/login' component={Login} />
                     </Switch>

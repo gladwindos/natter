@@ -1,7 +1,8 @@
 import axios from 'axios';
 import { setAlert } from './alert';
 import {
-    GET_POST,
+    GET_All_POSTS,
+    GET_USER_FEED,
     UPDATE_VOTES,
     DELETE_POST,
     ADD_POST,
@@ -13,7 +14,26 @@ export const getPosts = () => async dispatch => {
         const res = await axios.get('api/posts');
 
         dispatch({
-            type: GET_POST,
+            type: GET_All_POSTS,
+            payload: res.data
+        });
+    } catch (error) {
+        dispatch({
+            type: POST_ERROR,
+            payload: {
+                msg: error.response.statusText,
+                status: error.response.status
+            }
+        });
+    }
+};
+
+export const getUserFeed = () => async dispatch => {
+    try {
+        const res = await axios.get('api/posts/feed');
+
+        dispatch({
+            type: GET_USER_FEED,
             payload: res.data
         });
     } catch (error) {

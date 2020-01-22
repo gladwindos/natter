@@ -1,13 +1,10 @@
-.section-feed {
-    margin-top: 50px;
-}
-
 .post-list {
     max-width: 720px;
     margin: auto;
     display: flex;
     flex-direction: column;
     align-items: center;
+    margin-top: 50px;
 }
 
 .post-item {

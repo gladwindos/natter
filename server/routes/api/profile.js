@@ -9,11 +9,14 @@ const Profile = require('../../models/Profile');
 const Community = require('../../models/Community');
 
 // @route    PUT api/profile/
-// @desc     Create/update user
+// @desc     Create/update user profile
 // @access   Private
 router.post('/', auth, async (req, res) => {
     const profileFields = {};
     profileFields.user = req.user.id;
+
+    if (req.body.avatar) profileFields.avatar = req.body.avatar;
+    if (req.body.bio) profileFields.bio = req.body.bio;
 
     try {
         let profile = await Profile.findOneAndUpdate(

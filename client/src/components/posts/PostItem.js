@@ -15,7 +15,7 @@ const totalVotes = votes => {
 
 const PostItem = ({
     auth,
-    post: { _id, title, user, community, votes, comments, createdAt },
+    post: { _id, title, user, profile, community, votes, comments, createdAt },
     upvotePost,
     downvotePost,
     deletePost
@@ -27,8 +27,8 @@ const PostItem = ({
                     <img
                         className='post-profile-img'
                         src={
-                            user.avatar
-                                ? user.avatar
+                            profile && profile.avatar
+                                ? profile.avatar
                                 : 'https://www.gravatar.com/avatar/00000000000000000000000000000000?d=mp&f=y'
                         }
                         alt='profile'
@@ -87,15 +87,17 @@ const PostItem = ({
                         <Dropdown.Menu>
                             <Dropdown.Item href='#!'>Share</Dropdown.Item>
                             <Dropdown.Item href='#!'>Bookmark</Dropdown.Item>
-                            {!auth.loading && user._id === auth.user._id && (
-                                <Dropdown.Item
-                                    className='bg-danger text-white'
-                                    href='#!'
-                                    onClick={e => deletePost(_id)}
-                                >
-                                    Delete
-                                </Dropdown.Item>
-                            )}
+                            {!auth.loading &&
+                                auth.user &&
+                                auth.user._id === user._id && (
+                                    <Dropdown.Item
+                                        className='bg-danger text-white'
+                                        href='#!'
+                                        onClick={e => deletePost(_id)}
+                                    >
+                                        Delete
+                                    </Dropdown.Item>
+                                )}
                         </Dropdown.Menu>
                     </Dropdown>
                 </div>

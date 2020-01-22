@@ -4,12 +4,12 @@ import { connect } from 'react-redux';
 import Container from 'react-bootstrap/Container';
 import Spinner from 'react-bootstrap/Spinner';
 import PostItem from '../posts/PostItem';
-import { getPosts } from '../../actions/post';
+import { getUserFeed } from '../../actions/post';
 
-const Feed = ({ getPosts, post: { posts, loading } }) => {
+const Feed = ({ getUserFeed, post: { posts, loading } }) => {
     useEffect(() => {
-        getPosts();
-    }, [getPosts]);
+        getUserFeed();
+    }, [getUserFeed]);
 
     return (
         <section className='section-feed'>
@@ -29,7 +29,7 @@ const Feed = ({ getPosts, post: { posts, loading } }) => {
 };
 
 Feed.propTypes = {
-    getPosts: PropTypes.func.isRequired,
+    getUserFeed: PropTypes.func.isRequired,
     post: PropTypes.object.isRequired
 };
 
@@ -37,4 +37,4 @@ const mapStateToProps = state => ({
     post: state.post
 });
 
-export default connect(mapStateToProps, { getPosts })(Feed);
+export default connect(mapStateToProps, { getUserFeed })(Feed);

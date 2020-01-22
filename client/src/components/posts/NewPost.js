@@ -50,7 +50,7 @@ const NewPost = ({
                 <Row className='justify-content-center'>
                     <Col xs={12} md={6}>
                         <h1>New Post</h1>
-                        {loading && profile === null ? (
+                        {loading || profile === null ? (
                             <Spinner animation='border' />
                         ) : (
                             <Form onSubmit={e => onSubmit(e)}>
