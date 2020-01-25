@@ -1,8 +1,13 @@
-import { GET_PROFILE, PROFILE_ERROR } from '../actions/types';
+import {
+    GET_PROFILE,
+    PROFILE_ERROR,
+    GET_PROFILE_POSTS
+} from '../actions/types';
 
 const initialState = {
     profile: null,
     loading: true,
+    posts: [],
     error: {}
 };
 
@@ -15,6 +20,12 @@ export default function(state = initialState, action) {
                 ...state,
                 profile: payload,
                 loading: false
+            };
+        case GET_PROFILE_POSTS:
+            return {
+                ...state,
+                posts: payload,
+                postsLoading: false
             };
         case PROFILE_ERROR:
             return {

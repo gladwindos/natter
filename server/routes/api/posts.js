@@ -99,9 +99,13 @@ router.get('/user/:id', async (req, res) => {
             return res.status(404).json({ msg: 'User not found' });
         }
 
-        const posts = await Post.find({ user: req.params.id }).sort({
-            createdAt: -1
-        });
+        const posts = await Post.find({ user: req.params.id })
+            .sort({
+                createdAt: -1
+            })
+            .populate({ path: 'user', select: 'username' })
+            .populate({ path: 'community', select: 'name' })
+            .populate({ path: 'profile', select: 'avatar' });
         res.json(posts);
     } catch (error) {
         console.error(error.message);

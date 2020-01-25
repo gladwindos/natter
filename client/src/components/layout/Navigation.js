@@ -8,7 +8,7 @@ import FormControl from 'react-bootstrap/FormControl';
 import Button from 'react-bootstrap/Button';
 import { logout } from '../../actions/auth';
 
-const Navigation = ({ auth: { isAuthenticated, loading }, logout }) => {
+const Navigation = ({ auth: { isAuthenticated, loading, user }, logout }) => {
     const handleLogout = e => {
         e.preventDefault();
 
@@ -18,8 +18,10 @@ const Navigation = ({ auth: { isAuthenticated, loading }, logout }) => {
     const authLinks = (
         <Fragment>
             <Nav.Link href='/feed'>Feed</Nav.Link>
-            <Nav.Link href='/profile'>Profile</Nav.Link>
-            <Nav.Link href='/new-post'>New Post</Nav.Link>
+            {user && user.username && (
+                <Nav.Link href={'/profile/' + user.username}>Profile</Nav.Link>
+            )}
+            <Nav.Link href='/new-post/'>New Post</Nav.Link>
             <Nav.Link href='/#!' onClick={handleLogout}>
                 Logout
             </Nav.Link>

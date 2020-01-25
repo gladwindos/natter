@@ -25,7 +25,6 @@
 .post-item .post-profile-img {
     width: 40px;
     height: 40px;
-    border-radius: 50%;
     margin-right: 10px;
 }
 
@@ -74,11 +73,26 @@
     color: inherit;
 }
 
-.post-item .post-options button,
-.post-item .post-options button:active {
-    /* color: inherit; */
-}
-
 .post-item .post-options button::after {
     content: none;
+}
+
+.profile-header ul {
+    list-style: none;
+    padding: 0;
+    display: flex;
+}
+
+.profile-header li {
+    padding: 0 10px;
+}
+
+.profile-header li:first-child {
+    padding-left: 0;
+}
+
+.profile-username {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
 }

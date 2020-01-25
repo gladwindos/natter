@@ -4,6 +4,7 @@ import { connect } from 'react-redux';
 import Moment from 'react-moment';
 import Card from 'react-bootstrap/Card';
 import Dropdown from 'react-bootstrap/Dropdown';
+import Image from 'react-bootstrap/Image';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { upvotePost, downvotePost, deletePost } from '../../actions/post';
 
@@ -24,7 +25,8 @@ const PostItem = ({
         <Card className='post-item'>
             <Card.Header>
                 <div className='post-user'>
-                    <img
+                    <Image
+                        roundedCircle
                         className='post-profile-img'
                         src={
                             profile && profile.avatar
@@ -33,7 +35,9 @@ const PostItem = ({
                         }
                         alt='profile'
                     />
-                    <Card.Link href='#'>{user.username}</Card.Link>
+                    <Card.Link href={'/profile/' + user.username}>
+                        {user.username}
+                    </Card.Link>
                 </div>
                 <div className='post-community'>
                     <Card.Link href='#'>{community.name}</Card.Link>

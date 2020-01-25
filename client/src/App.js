@@ -43,7 +43,10 @@ const App = () => {
                     <Switch>
                         <Route exact path='/' component={Explore} />
                         <PrivateRoute exact path='/feed' component={Feed} />
-                        <Route exact path='/profile' component={Profile} />
+                        <Route
+                            path='/profile/:usernameParam'
+                            component={Profile}
+                        />
                         <PrivateRoute
                             exact
                             path='/new-post'
