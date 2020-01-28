@@ -11,7 +11,7 @@ import {
 
 export const getPosts = () => async dispatch => {
     try {
-        const res = await axios.get('api/posts');
+        const res = await axios.get('/api/posts');
 
         dispatch({
             type: GET_All_POSTS,
@@ -30,7 +30,7 @@ export const getPosts = () => async dispatch => {
 
 export const getUserFeed = () => async dispatch => {
     try {
-        const res = await axios.get('api/posts/feed');
+        const res = await axios.get('/api/posts/feed');
 
         dispatch({
             type: GET_USER_FEED,
@@ -49,7 +49,7 @@ export const getUserFeed = () => async dispatch => {
 
 export const upvotePost = id => async dispatch => {
     try {
-        const res = await axios.put(`api/posts/${id}/upvote`);
+        const res = await axios.put(`/api/posts/${id}/upvote`);
 
         dispatch({
             type: UPDATE_VOTES,
@@ -74,7 +74,7 @@ export const upvotePost = id => async dispatch => {
 
 export const downvotePost = id => async dispatch => {
     try {
-        const res = await axios.put(`api/posts/${id}/downvote`);
+        const res = await axios.put(`/api/posts/${id}/downvote`);
 
         dispatch({
             type: UPDATE_VOTES,
@@ -101,7 +101,7 @@ export const downvotePost = id => async dispatch => {
 
 export const deletePost = id => async dispatch => {
     try {
-        await axios.delete(`api/posts/${id}`);
+        await axios.delete(`/api/posts/${id}`);
 
         dispatch({
             type: DELETE_POST,
@@ -134,8 +134,10 @@ export const addPost = formData => async dispatch => {
             'Content-Type': 'application/json'
         }
     };
+    console.log(formData);
+
     try {
-        const res = await axios.post('api/posts', formData, config);
+        const res = await axios.post('/api/posts', formData, config);
 
         dispatch({
             type: ADD_POST,
@@ -159,5 +161,7 @@ export const addPost = formData => async dispatch => {
                 setAlert('You need to login to create a new post', 'danger')
             );
         }
+
+        console.log(error.response);
     }
 };

@@ -11,7 +11,8 @@ const ProfileSchema = new mongoose.Schema(
             default: ''
         },
         bio: {
-            type: String
+            type: String,
+            default: ''
         },
         communities: [
             {
@@ -23,17 +24,17 @@ const ProfileSchema = new mongoose.Schema(
         ],
         followers: [
             {
-                user: {
+                profile: {
                     type: mongoose.Schema.Types.ObjectId,
-                    ref: 'user'
+                    ref: 'profile'
                 }
             }
         ],
         following: [
             {
-                user: {
+                profile: {
                     type: mongoose.Schema.Types.ObjectId,
-                    ref: 'user'
+                    ref: 'profile'
                 }
             }
         ]

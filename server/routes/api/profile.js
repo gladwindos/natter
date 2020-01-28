@@ -99,9 +99,23 @@ router.get('/user/:username', async (req, res) => {
             username: req.params.username
         }).select('_id');
 
+        if (!user) return res.status(400).json({ msg: 'Profile not found' });
+
         const profile = await Profile.findOne({
             user: user._id
-        }).populate('user', ['username']);
+        })
+            .populate('user', ['username'])
+            .populate('communities.community', ['_id', 'name', 'avatar'])
+            .populate({
+                path: 'followers.profile',
+                select: '_id avatar',
+                populate: { path: 'user', select: '_id username' }
+            })
+            .populate({
+                path: 'following.profile',
+                select: '_id avatar',
+                populate: { path: 'user', select: '_id username' }
+            });
 
         if (!profile) return res.status(400).json({ msg: 'Profile not found' });
 
@@ -195,37 +209,39 @@ router.put('/leave/community/:id', auth, async (req, res) => {
     }
 });
 
-// @route    PUT api/profile/follow/user/:id
+// @route    PUT api/profile/follow/:id
 // @desc     Follow user
 // @access   Private
-router.put('/follow/user/:id', auth, async (req, res) => {
+router.put('/follow/:id', auth, async (req, res) => {
     try {
-        if (req.user.id === req.params.id)
-            return res.status(400).json({ msg: "You can't follow yourself" });
+        const myProfile = await Profile.findOne({ user: req.user.id });
+        if (!myProfile)
+            return res.status(400).json({ msg: 'Profile not found' });
 
-        const profile = await Profile.findOne({ user: req.user.id });
-        if (!profile) return res.status(400).json({ msg: 'Profile not found' });
-
-        const otherProfile = await Profile.findOne({ user: req.params.id });
-        if (!otherProfile)
+        const profileToFollow = await Profile.findById(req.params.id);
+        if (!profileToFollow)
             return res.status(400).json({ msg: 'Other profile not found' });
 
+        if (myProfile.id === profileToFollow.id)
+            return res.status(400).json({ msg: "You can't follow yourself" });
+
         if (
-            profile.following.filter(x => x.user.toString() === req.params.id)
-                .length > 0
+            myProfile.following.filter(
+                x => x.profile.toString() === profileToFollow.id
+            ).length > 0
         ) {
             return res
                 .status(400)
                 .json({ msg: 'This user is already in your following list' });
         }
 
-        profile.following.unshift({ user: req.params.id });
+        myProfile.following.unshift({ profile: profileToFollow.id });
 
-        await profile.save();
+        await myProfile.save();
 
         if (
-            otherProfile.followers.filter(
-                x => x.user.toString() === req.user.id
+            profileToFollow.followers.filter(
+                x => x.profile.toString() === myProfile.id
             ).length > 0
         ) {
             return res.status(400).json({
@@ -233,11 +249,11 @@ router.put('/follow/user/:id', auth, async (req, res) => {
             });
         }
 
-        otherProfile.followers.unshift({ user: req.user.id });
+        profileToFollow.followers.unshift({ profile: myProfile.id });
 
-        await otherProfile.save();
+        await profileToFollow.save();
 
-        res.json(profile);
+        res.json(myProfile);
     } catch (error) {
         console.error(error.message);
         if (error.kind == 'ObjectId') {
@@ -249,38 +265,43 @@ router.put('/follow/user/:id', auth, async (req, res) => {
     }
 });
 
-// @route    PUT api/profile/unfollow/user/:id
+// @route    PUT api/profile/unfollow/:id
 // @desc     Unfollow user
 // @access   Private
-router.put('/unfollow/user/:id', auth, async (req, res) => {
+router.put('/unfollow/:id', auth, async (req, res) => {
     try {
-        const profile = await Profile.findOne({ user: req.user.id });
-        if (!profile) return res.status(400).json({ msg: 'Profile not found' });
+        const myProfile = await Profile.findOne({ user: req.user.id });
+        if (!myProfile)
+            return res.status(400).json({ msg: 'Profile not found' });
 
-        const otherProfile = await Profile.findOne({ user: req.params.id });
-        if (!otherProfile)
+        const profileToFollow = await Profile.findById(req.params.id);
+        if (!profileToFollow)
             return res.status(400).json({ msg: 'Other profile not found' });
 
+        if (myProfile.id === profileToFollow.id)
+            return res.status(400).json({ msg: "You can't unfollow yourself" });
+
         if (
-            profile.following.filter(x => x.user.toString() === req.params.id)
-                .length === 0
+            myProfile.following.filter(
+                x => x.profile.toString() === profileToFollow.id
+            ).length === 0
         ) {
             return res
                 .status(400)
                 .json({ msg: 'This user is not in your following list' });
         }
 
-        const myRemoveIndex = profile.following
-            .map(x => x.user.toString())
-            .indexOf(req.params.id);
+        const myRemoveIndex = myProfile.following
+            .map(x => x.profile.toString())
+            .indexOf(profileToFollow.id);
 
-        profile.following.splice(myRemoveIndex, 1);
+        myProfile.following.splice(myRemoveIndex, 1);
 
-        await profile.save();
+        await myProfile.save();
 
         if (
-            otherProfile.followers.filter(
-                x => x.user.toString() === req.user.id
+            profileToFollow.followers.filter(
+                x => x.profile.toString() === myProfile.id
             ).length === 0
         ) {
             return res.status(400).json({
@@ -288,15 +309,15 @@ router.put('/unfollow/user/:id', auth, async (req, res) => {
             });
         }
 
-        const otherRemoveIndex = otherProfile.followers
-            .map(x => x.user.toString())
-            .indexOf(req.user.id);
+        const otherRemoveIndex = profileToFollow.followers
+            .map(x => x.profile.toString())
+            .indexOf(myProfile.id);
 
-        otherProfile.followers.splice(otherRemoveIndex, 1);
+        profileToFollow.followers.splice(otherRemoveIndex, 1);
 
-        await otherProfile.save();
+        await profileToFollow.save();
 
-        res.json(profile);
+        res.json(myProfile);
     } catch (error) {
         console.error(error.message);
         if (error.kind == 'ObjectId') {

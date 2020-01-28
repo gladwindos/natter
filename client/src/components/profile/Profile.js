@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
 import Container from 'react-bootstrap/Container';
@@ -11,6 +11,7 @@ import PostItem from '../posts/PostItem';
 import { connect } from 'react-redux';
 import { getUserProfile } from '../../actions/profile';
 import { useParams } from 'react-router-dom';
+import ProfileModal from './ProfileModal';
 
 const Profile = ({
     getUserProfile,
@@ -23,8 +24,37 @@ const Profile = ({
         getUserProfile(usernameParam);
     }, [getUserProfile, usernameParam]);
 
+    const [showModal, setShowModal] = useState({
+        show: false,
+        content: [],
+        type: ''
+    });
+    const handleModalClose = () =>
+        setShowModal({
+            show: false,
+            content: [],
+            type: ''
+        });
+    const handleModalShow = (e, content, type) => {
+        e.preventDefault();
+
+        setShowModal({
+            show: true,
+            content: content,
+            type: type
+        });
+    };
+
     const renderProfile = () => {
-        const { user, avatar, bio } = profile;
+        const {
+            user,
+            avatar,
+            bio,
+            communities,
+            followers,
+            following
+        } = profile;
+
         return (
             <div className='profile-header'>
                 <Container>
@@ -54,10 +84,13 @@ const Profile = ({
                                 <ul>
                                     <li>
                                         <Link
-                                            to={
-                                                '/' +
-                                                user.username +
-                                                '/communities'
+                                            to='/#!'
+                                            onClick={e =>
+                                                handleModalShow(
+                                                    e,
+                                                    communities,
+                                                    'communities'
+                                                )
                                             }
                                         >
                                             Communities
@@ -66,10 +99,13 @@ const Profile = ({
                                     |
                                     <li>
                                         <Link
-                                            to={
-                                                '/' +
-                                                user.username +
-                                                '/followers'
+                                            to='/#!'
+                                            onClick={e =>
+                                                handleModalShow(
+                                                    e,
+                                                    followers,
+                                                    'followers'
+                                                )
                                             }
                                         >
                                             Followers
@@ -78,10 +114,13 @@ const Profile = ({
                                     |
                                     <li>
                                         <Link
-                                            to={
-                                                '/' +
-                                                user.username +
-                                                '/following'
+                                            to='/#!'
+                                            onClick={e =>
+                                                handleModalShow(
+                                                    e,
+                                                    following,
+                                                    'following'
+                                                )
                                             }
                                         >
                                             Following
@@ -115,8 +154,14 @@ const Profile = ({
         <Spinner />
     ) : (
         <section className='section-profile'>
-            {renderProfile()}
+            {profile && renderProfile()}
             {renderPosts()}
+            <ProfileModal
+                show={showModal.show}
+                content={showModal.content}
+                type={showModal.type}
+                handleClose={handleModalClose}
+            />
         </section>
     );
 };

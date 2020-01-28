@@ -1,11 +1,10 @@
 import axios from 'axios';
+import { setAlert } from './alert';
 import { GET_PROFILE, GET_PROFILE_POSTS, PROFILE_ERROR } from './types';
 
 export const getCurrentProfile = () => async dispatch => {
     try {
         const res = await axios.get('/api/profile/me');
-
-        console.log(res.data.user._id);
 
         dispatch({
             type: GET_PROFILE,
@@ -19,6 +18,8 @@ export const getCurrentProfile = () => async dispatch => {
                 status: error.response.status
             }
         });
+
+        dispatch(setAlert('Profile not found', 'danger'));
     }
 };
 
@@ -47,5 +48,7 @@ export const getUserProfile = username => async dispatch => {
                 status: error.response.status
             }
         });
+
+        dispatch(setAlert('Profile not found', 'danger'));
     }
 };

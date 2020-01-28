@@ -8,7 +8,7 @@ const User = require('../../models/User');
 const Community = require('../../models/Community');
 
 // @route POST api/communities
-// @desc Create or Update community
+// @desc Create community
 // @access Private
 router.post(
     '/',
@@ -25,6 +25,10 @@ router.post(
         }
 
         try {
+            const profile = await Profile.findOne({ user: req.user.id });
+            if (!profile)
+                return res.status(400).json({ msg: 'Profile not found' });
+
             const newCommunity = new Community({
                 name: req.body.name,
                 creator: req.user.id,
@@ -32,6 +36,10 @@ router.post(
             });
 
             const community = await newCommunity.save();
+
+            profile.communities.unshift({ community: community.id });
+
+            await profile.save();
 
             res.json(community);
         } catch (error) {
