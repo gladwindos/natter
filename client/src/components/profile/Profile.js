@@ -16,7 +16,7 @@ import ProfileModal from './ProfileModal';
 const Profile = ({
     getUserProfile,
     auth,
-    profile: { profile, loading, posts }
+    profile: { profile, loading, posts, postsLoading }
 }) => {
     const { usernameParam } = useParams();
 
@@ -29,12 +29,14 @@ const Profile = ({
         content: [],
         type: ''
     });
+
     const handleModalClose = () =>
         setShowModal({
             show: false,
             content: [],
             type: ''
         });
+
     const handleModalShow = (e, content, type) => {
         e.preventDefault();
 
@@ -74,12 +76,14 @@ const Profile = ({
                             <div>
                                 <div className='profile-username'>
                                     <h1>{user.username}</h1>
-                                    {auth.user &&
-                                        auth.user._id === user._id && (
-                                            <Button size='sm'>
-                                                Edit Profile
-                                            </Button>
-                                        )}
+                                    {auth.user && auth.user._id === user._id && (
+                                        <Button
+                                            size='sm'
+                                            href={'/settings/profile'}
+                                        >
+                                            Edit Profile
+                                        </Button>
+                                    )}
                                 </div>
                                 <ul>
                                     <li>
@@ -137,13 +141,19 @@ const Profile = ({
     };
 
     const renderPosts = () => {
-        return (
+        return postsLoading ? (
+            <Spinner />
+        ) : (
             <div className='profile-posts'>
                 <Container>
                     <div className='post-list'>
-                        {posts.map(post => (
-                            <PostItem key={post._id} post={post} />
-                        ))}
+                        {posts.length > 0 ? (
+                            posts.map(post => (
+                                <PostItem key={post._id} post={post} />
+                            ))
+                        ) : (
+                            <div className='no-posts-section'>No posts yet</div>
+                        )}
                     </div>
                 </Container>
             </div>

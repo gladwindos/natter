@@ -8,6 +8,7 @@ const initialState = {
     profile: null,
     loading: true,
     posts: [],
+    postsLoading: true,
     error: {}
 };
 

@@ -96,3 +96,28 @@
     justify-content: space-between;
     align-items: center;
 }
+
+.profile-modal .modal-title {
+    text-transform: capitalize;
+}
+
+.profile-modal ul {
+    list-style: none;
+    padding: 0;
+}
+
+.profile-modal li {
+    padding: 5px;
+}
+
+.profile-modal li img {
+    height: 50px;
+    width: 50px;
+    margin-right: 10px;
+    border: 1px solid #ddd;
+}
+
+.profile-modal .modal-body {
+    max-height: 430px;
+    overflow: auto;
+}
