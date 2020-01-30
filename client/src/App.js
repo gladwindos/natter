@@ -6,6 +6,7 @@ import Navigation from './components/layout/Navigation';
 import Feed from './components/feed/Feed';
 import Explore from './components/explore/Explore';
 import Profile from './components/profile/Profile';
+import Community from './components/community/Community';
 import NewPost from './components/posts/NewPost';
 import Register from './components/auth/Register';
 import Login from './components/auth/Login';
@@ -46,6 +47,10 @@ const App = () => {
                         <Route
                             path='/profile/:usernameParam'
                             component={Profile}
+                        />
+                        <Route
+                            path='/community/:nameParam'
+                            component={Community}
                         />
                         <PrivateRoute
                             exact

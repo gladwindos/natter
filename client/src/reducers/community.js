@@ -1,11 +1,11 @@
 import {
-    GET_PROFILE,
-    PROFILE_ERROR,
-    GET_PROFILE_POSTS
+    GET_COMMUNITY,
+    COMMUNITY_ERROR,
+    GET_COMMUNITY_POSTS
 } from '../actions/types';
 
 const initialState = {
-    profile: null,
+    community: null,
     loading: true,
     posts: [],
     postsLoading: true,
@@ -16,25 +16,25 @@ export default function(state = initialState, action) {
     const { type, payload } = action;
 
     switch (type) {
-        case GET_PROFILE:
+        case GET_COMMUNITY:
             return {
                 ...state,
-                profile: payload,
+                community: payload,
                 loading: false
             };
-        case GET_PROFILE_POSTS:
+        case GET_COMMUNITY_POSTS:
             return {
                 ...state,
                 posts: payload,
                 postsLoading: false
             };
-        case PROFILE_ERROR:
+        case COMMUNITY_ERROR:
             return {
                 ...state,
                 error: payload,
                 loading: false,
                 postsLoading: false,
-                profile: null
+                community: null
             };
         default:
             return state;

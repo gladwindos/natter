@@ -40,7 +40,9 @@ const PostItem = ({
                     </Card.Link>
                 </div>
                 <div className='post-community'>
-                    <Card.Link href='#'>{community.name}</Card.Link>
+                    <Card.Link href={'/community/' + community.name}>
+                        {community.name}
+                    </Card.Link>
                 </div>
             </Card.Header>
             <Card.Body>

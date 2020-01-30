@@ -67,9 +67,30 @@ router.get('/', async (req, res) => {
 // @route GET api/communities/:id
 // @desc Get community by id
 // @access Public
-router.get('/:id', async (req, res) => {
+router.get('/id/:id', async (req, res) => {
     try {
         const community = await Community.findById(req.params.id);
+
+        if (!community) {
+            return res.status(404).json({ msg: 'Community not found' });
+        }
+
+        res.json(community);
+    } catch (error) {
+        console.error(error.message);
+        if (error.kind == 'ObjectId') {
+            return res.status(400).json({ msg: 'Community not found' });
+        }
+        res.status(500).send('Server Error');
+    }
+});
+
+// @route GET api/communities/:name
+// @desc Get community by name
+// @access Public
+router.get('/name/:name', async (req, res) => {
+    try {
+        const community = await Community.findOne({ name: req.params.name });
 
         if (!community) {
             return res.status(404).json({ msg: 'Community not found' });
@@ -88,7 +109,7 @@ router.get('/:id', async (req, res) => {
 // @route PUT api/communities/:id
 // @desc Update community
 // @access Private
-router.put('/:id', auth, async (req, res) => {
+router.put('id/:id', auth, async (req, res) => {
     try {
         const community = await Community.findById(req.params.id);
 
